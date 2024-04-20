@@ -8,8 +8,10 @@
       </el-button>
     </header>
     <!-- 树形控件展示知识点 -->
-    <el-tree :data="categories" :props="defaultProps" default-expand-all node-key="id" highlight-current
-      :render-content="renderContent" class="tree"></el-tree>
+    <el-tree :data="categories" :props="defaultProps" node-key="id" highlight-current default-expand-all draggable
+      :allow-drag="allowDrag" :allow-drop="allowDrop" :render-content="renderContent" @node-drag-end="onDragEnd"
+      class="tree">
+    </el-tree>
     <!-- 新建知识点/分类对话框 -->
     <el-dialog title="新建知识点/分类" v-model="showCreateDialog" :before-close="handleCloseCreateDialog">
       <el-form :model="createForm">
@@ -222,7 +224,7 @@ const editCategory = async (data) => {
     }
   }).catch((err) => {
     // 处理取消操作或者prompt验证未通过的情况
-    
+
   });
 };
 // 删除知识点
@@ -255,6 +257,76 @@ const deleteCategory = async (data) => {
 };
 
 onMounted(() => fetchCategories(props.courseId));
+
+// 拖拽类型
+const allowDrag = (node) => {
+  // 允许拖拽所有类型的节点
+  return true;
+};
+
+// 拖拽
+const allowDrop = (draggingNode, dropNode, type) => {
+  // 允许任意拖拽，除了将知识分类拖拽到知识点里面
+  if (!draggingNode.data.is_knowledge_point && dropNode.data.is_knowledge_point) {
+    // 如果拖拽对象是分类，并且目标节点是知识点，则不允许拖拽
+    return false;
+  }
+  // 禁止将知识分类添加到二级知识分类内部
+  if (!draggingNode.data.is_knowledge_point && type === 'inner') {
+    // 检查 dropNode 是否已经是二级分类
+    if (dropNode.level === 2) {
+      return false;
+    }
+    // 检查被拖拽的顶级分类是否包含二级分类
+    if (draggingNode.data.children) {
+      let hasSecondLevel = draggingNode.data.children.some(child => !child.is_knowledge_point);
+      if (hasSecondLevel) {
+        // 如果被拖拽的分类已经有二级子分类，禁止将其拖拽成其他分类的子分类
+        return false;
+      }
+    }
+  }
+  // 不能将知识点添加到知识点
+  if(draggingNode.data.is_knowledge_point && dropNode.data.is_knowledge_point ){
+    return false;
+  }
+  if (dropNode.level === 2 && (type !== 'inner') && dropNode.data.is_knowledge_point === false) {
+    return false;
+  }
+  // 其他情况均允许拖拽
+  return true;
+};
+// 拖拽结束
+const onDragEnd = (draggingNode, dropNode, dropType, ev) => {  
+  // console.log(dropType);
+  // 调用API更新后端数据
+  if(dropType !== 'none'){ // 有拖拽再调用
+    updateCategoryPosition(draggingNode, dropNode, dropType);
+  }
+};
+
+// 调用拖拽知识点API
+const updateCategoryPosition = async (draggingNode, dropNode, dropType) => {
+  const token = sessionStorage.getItem('access');
+  const url = `http://127.0.0.1:8081/api/teach_admin/courses/${props.courseId}/tree-update/`;
+  const data = {
+    draggedId: draggingNode.data.id,
+    dropId: dropNode.data.id,
+    type: dropType
+  };
+  try {
+    await axios.post(url, data, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    ElMessage.success('位置更新成功');
+    fetchCategories(props.courseId); // 重新获取数据以更新视图
+  } catch (error) {
+    console.error('位置更新失败:', error);
+    ElMessage.error('位置更新失败');
+  }
+};
 </script>
 <style scoped>
 .header-container {

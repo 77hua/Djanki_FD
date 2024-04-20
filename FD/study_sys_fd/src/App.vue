@@ -2,7 +2,7 @@
   <div id="app">
     <div class="img-box">
       <img src="./assets/images/logo.png" alt="">
-      <h1 class="title">教考分离——自适应刷题系统</h1>
+      <h1 class="title" @click="toHome">教考分离——自适应刷题系统</h1>
     </div>
     <router-view v-slot="{ Component }">
       <transition :name="transitionName">
@@ -11,7 +11,19 @@
     </router-view>
   </div>
 </template>
+<script setup>
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+const toHome = () => {
+  router.push({ name: 'Login' });
+}
+const route = useRoute();
+// 决定要不要添加移入动画
+const transitionName = computed(() => route.meta.transitionName || '');
 
+</script>
 <style lang="less">
 body {
   position: relative;
@@ -61,17 +73,9 @@ body::before {
       margin-top: 10px;
       color: #1B7EC6;
       font-size: 40px;
+      cursor: pointer;
     }
   }
 }
 </style>
 
-<script setup>
-import { useRoute } from 'vue-router';
-import { computed } from 'vue';
-
-const route = useRoute();
-// 决定要不要添加移入动画
-const transitionName = computed(() => route.meta.transitionName || '');
-
-</script>

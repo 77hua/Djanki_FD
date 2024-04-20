@@ -17,16 +17,43 @@ const routes = [
     component: () => import('../views/Login.vue'),
     meta: { transitionName: 'slide' }
   },
+  // 前台：首页
   {
     path: '/home',
     name: 'Home',
-    component: () => import('../views/Home.vue')
+    component: () => import('../views/Home.vue'),
+    children: [ // 子组件 
+      {
+        path:'',
+        name:"HomeSelect",
+        component:() => import('@/components/HomeSelect.vue')
+      },
+      {
+        path: 'study',
+        name:'Study',
+        component: () => import('../views/Study.vue')
+      },
+      {
+        path:'exercises/:id',
+        name:'Exercises',
+        props: true,
+        component: () => import('../views/Exercises.vue'),
+      },
+      {
+        path:'quiz_page/:id',
+        name:'QuizPage',
+        props: true,
+        component: () => import('../views/QuizPage.vue')
+      },
+    ]
   },
+  // 后台：首页
   {
     path: '/admin',
     name: 'Admin',
     component: () => import('../views/Admin.vue')
   },
+  // 后台：课程管理
   {
     path: '/course-detail/:id', // 使用动态路由匹配课程ID
     name: 'CourseDetail',
@@ -37,6 +64,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHashHistory(),
+  base: process.env.BASE_URL,
   routes
 })
 

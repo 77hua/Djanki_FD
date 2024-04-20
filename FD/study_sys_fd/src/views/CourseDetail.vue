@@ -6,8 +6,9 @@
         <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" class="header-menu">
           <el-menu-item index="1">知识点</el-menu-item>
           <el-menu-item index="2">试题库</el-menu-item>
+          <el-menu-item index="3">课程目标</el-menu-item>
           <!-- 返回选项 -->
-          <el-menu-item index="3" class="menu-item-right" @click="goBack"><el-icon>
+          <el-menu-item index="4" class="menu-item-right" @click="goBack"><el-icon>
             <Back />
           </el-icon>返回</el-menu-item>
         </el-menu>
@@ -19,7 +20,11 @@
         </div>
         <div v-if="activeIndex === '2'">
           <!-- 试题库组件 -->
-          <question></question>
+          <question :courseId="Number(courseId)"></question>
+        </div>
+        <div v-if="activeIndex === '3'">
+          <!-- 新建课程目标 -->
+          <SupportObjective :courseId="Number(courseId)" />
         </div>
       </el-main>
     </el-container>
@@ -27,17 +32,18 @@
 </template>
 
 <script setup>
-import { ref,toRefs } from 'vue';
+import { ref } from 'vue';
 import Category from '../components/Category.vue';
 import Question from '../components/Question.vue';
+import SupportObjective from '../components/SupportObjective.vue';
 import { useRouter,useRoute } from 'vue-router';
 import { Back } from '@element-plus/icons-vue';
 
-const route = useRoute();
 const router = useRouter();
 
 const activeIndex = ref('1');
 
+const route = useRoute();
 const courseId = route.params.id;
 
 const handleSelect = (index) => {
