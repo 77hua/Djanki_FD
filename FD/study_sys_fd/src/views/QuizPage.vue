@@ -88,7 +88,7 @@ const showAnswer = ref(false); // 显示答案框
 const responseOptions = [ // 响应质量
   { label: '完全不懂', value: 0, type: 'danger' },
   { label: '难懂', value: 1, type: 'warning' },
-  { label: '不太懂', value: 2,type: 'custom' },
+  { label: '不太懂', value: 2, type: 'custom' },
   { label: '懂了，但忘了', value: 3, type: 'info' },
   { label: '思考后能懂', value: 4, type: 'primary' },
   { label: '完全理解', value: 5, type: 'success' }
