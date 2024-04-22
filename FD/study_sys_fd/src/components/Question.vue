@@ -1,6 +1,8 @@
 <!-- 试题库 -->
 <template>
   <div>
+    <!-- 搜索框 -->
+    <el-input v-model="searchQuery" placeholder="搜索试题" @input="debouncedSearch" />
     <!-- 新建试题 -->
     <div style="display: flex;">
       <create-question-form :courseId="courseId" :categories="categories" :objectives="objectives"
@@ -10,7 +12,7 @@
     <el-table :data="questions" style="width: 100%" stripe @row-click="toggleDetail">
       <el-table-column prop="content_markdown" label="题目">
         <template #default="{ row }">
-          <el-tooltip class="item" effect="dark" :content="row.content_text" placement="top">
+          <el-tooltip class="item" effect="dark" :content="truncateContent(row.content_text)" placement="top">
             <span>{{ truncateContent(row.content_text) }}</span>
           </el-tooltip>
         </template>
@@ -33,7 +35,7 @@
       </el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="{ row }">
-          <el-button type="primary" @click.stop="editQuestion(row)" >编辑</el-button>
+          <el-button type="primary" @click.stop="editQuestion(row)">编辑</el-button>
           <el-button type="danger" @click.stop="deleteQuestion(row)">删除</el-button>
         </template>
       </el-table-column>
@@ -100,7 +102,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted,watchEffect,onUnmounted  } from 'vue';
+import { ref, onMounted, watchEffect, onUnmounted } from 'vue';
 import axios from 'axios';
 import CreateQuestionForm from './CreateQuestionForm.vue';
 import { marked } from 'marked';
@@ -178,6 +180,10 @@ const handleQuestionCreated = () => {
 
 // 题干只显示部分
 const truncateContent = (text) => {
+  // 验证 `text` 是否为有效的字符串
+  if (typeof text !== 'string' || text.length === 0) {
+    return ''; // 返回空字符串或默认值
+  }
   return text.length > 15 ? text.substring(0, 15) + '...' : text;
 };
 // 知识点之间拼接逗号
@@ -250,7 +256,7 @@ const editQuestion = (question) => {
   editForm.value = {
     ...question,
     categories: question.categories.map(category => category.id), // 提取 ID
-    support_objectives:question.support_objectives.map(support_objectives => support_objectives.id)
+    support_objectives: question.support_objectives.map(support_objectives => support_objectives.id)
   };
   editDialogVisible.value = true; // 显示编辑对话框
 };
@@ -352,6 +358,38 @@ async function replaceLocalImagesWithUrls(markdownText) {
   }
   return markdownText;
 }
+
+
+import debounce from 'lodash/debounce';
+// 搜索关键字
+const searchQuery = ref('');
+// 防抖函数，300 毫秒
+const debouncedSearch = debounce(async () => {
+  const trimmedQuery = searchQuery.value.trim();
+  if (trimmedQuery) {
+    try {
+      const token = sessionStorage.getItem('access');
+      const response = await axios.get(
+        `http://127.0.0.1:8081/api/teach_admin/question/search-by-content/?query=${trimmedQuery}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        }
+      );
+      questions.value = response.data.map(question => ({ // 转换试题内容
+        ...question,
+        content_text: markdownToPlainText(question.content_markdown),
+      }));
+    } catch (error) {
+      ElMessage.error("没找到该试题！");
+    }
+  } else {
+    // 搜索框为空时，获取所有试题
+    fetchQuestions();
+  }
+}, 300); // 防抖 300 毫秒
+
 </script>
 
 <style scoped>

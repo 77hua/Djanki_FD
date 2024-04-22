@@ -49,7 +49,7 @@ onBeforeRouteLeave(() => {
 const router = useRouter();
 
 const credentials = reactive({
-  username: 'qqh',
+  username: 'lxy',
   password: '777',
 });
 const login = async () => {

@@ -4,7 +4,7 @@
       <h1>学习平台</h1>
       <nav>
         <!-- 用户信息或登录链接 -->
-        <div>
+        <div class="user" @click="backToLogin">
           您好, {{ username }}
         </div>
       </nav>
@@ -17,8 +17,12 @@
 </template>
 
 <script setup>
+import {useRouter} from 'vue-router'
 const username = sessionStorage.getItem('username');
-
+const router = useRouter();
+const backToLogin = () =>{
+  router.push({name:"Login"})
+}
 </script>
 
 <style scoped>
@@ -41,6 +45,8 @@ header {
 header h1 {
   margin: 0;
 }
-
+.user {
+  cursor: pointer;
+}
 
 </style>
