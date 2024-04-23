@@ -1,5 +1,6 @@
 <template>
-  <el-container style="margin-top: 20px;">
+  <el-container class="exercises-wrapper">
+    <!-- 侧边栏 -->
     <el-aside width="200px">
       <el-menu default-active="2" class="el-menu-vertical-demo">
         <el-menu-item index="1" @click="backToStudy">
@@ -8,12 +9,11 @@
         </el-menu-item>
       </el-menu>
     </el-aside>
-
+    <!-- 主体学习情况 -->
     <el-container>
       <el-header style="text-align: center; line-height: 60px;">
         学习情况 - {{ courseName }}
       </el-header>
-
       <el-main>
         <el-row :gutter="20">
           <el-col :span="8">
@@ -119,6 +119,11 @@ const startReview = () => {
 </script>
 
 <style scoped>
+.exercises-wrapper{
+  margin-top: 20px;
+  background-color: #333;
+}
+
 .box-card {
   height: 120px;
   line-height: 120px;
@@ -127,16 +132,18 @@ const startReview = () => {
   background-color: var(--status-color);
 }
 
+.box-card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); /* 悬停阴影 */
+  transform: translateY(-8px); /* 悬停时悬空 */
+}
 .float-left {
   float: left;
   margin-left: 10px;
 }
-
 .float-right {
   float: right;
   margin-right: 10px;
 }
-
 .el-header {
   background-color: #b3c0d1;
 }
@@ -149,5 +156,36 @@ const startReview = () => {
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 400px;
+}
+@keyframes waveBackgroundAnimation {
+  0% {
+    background-position: 0% 0%; /* 初始位置 */
+  }
+  50% {
+    background-position: 100% 100%; /* 波浪在对角线移动 */
+  }
+  100% {
+    background-position: 0% 0%; /* 返回初始位置 */
+  }
+}
+
+.exercises-wrapper {
+  position: relative; /* 容纳绝对定位元素 */
+  display: flex;
+  justify-content: space-around; /* 卡片之间的间距 */
+  padding: 20px;
+  border-radius: 10px; /* 圆角 */
+  overflow: hidden; /* 防止溢出 */
+}
+
+.wave-background {
+  position: absolute; /* 波浪背景置于底层 */
+  top: 0; /* 顶部开始 */
+  left: 0; /* 左侧开始 */
+  width: 100%; /* 覆盖整个容器 */
+  height: 100%; /* 覆盖整个容器 */
+  background: linear-gradient(to bottom right, #3c3c3c, #2f2f2f, #4a4a4a); /* 渐变背景 */
+  background-size: 200% 200%; /* 背景大小 */
+  animation: waveBackgroundAnimation 5s linear infinite; /* 动画 */
 }
 </style>

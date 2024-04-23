@@ -2,9 +2,15 @@
 <template>
   <div>
     <!-- 搜索框 -->
-    <el-input v-model="searchQuery" placeholder="搜索试题" @input="debouncedSearch" />
+    <el-input v-model="searchQuery" placeholder="搜索试题" @input="debouncedSearch" class="search-input">
+      <template #prepend>
+        <el-icon>
+          <Search />
+        </el-icon>
+      </template>
+    </el-input>
     <!-- 新建试题 -->
-    <div style="display: flex;">
+    <div style="display: flex;margin-bottom: 10px;">
       <create-question-form :courseId="courseId" :categories="categories" :objectives="objectives"
         @questionCreated="handleQuestionCreated" /> <!-- @question-created监听子组件 -->
     </div>
@@ -41,21 +47,31 @@
       </el-table-column>
     </el-table>
     <!-- 试题详情区域 -->
-    <el-dialog v-model="dialogVisible" title="试题详情" width="80%">
-      <div v-if="detailRow">
-        <h3>题型：{{ detailRow.question_type }}</h3>
-        <h2>题目：</h2>
-        <md-preview v-model="detailRow.content_markdown" />
-        <h2>答案：</h2>
-        <md-preview v-model="detailRow.answer_markdown" />
-        <h2>解析：</h2>
-        <md-preview v-model="detailRow.explanation_markdown" />
-        <!-- 其他信息，如答案、解析等 -->
-      </div>
-      <template #footer>
-        <el-button @click="dialogVisible = false">关闭</el-button>
-      </template>
-    </el-dialog>
+    <div>
+      <el-dialog v-model="dialogVisible" title="试题详情" width="80%" :close-on-press-escape="true">
+        <div class="dialog-content">
+          <div v-if="detailRow">
+            <h3 class="dialog-title">题型：{{ detailRow.question_type }}</h3>
+            <h3 class="dialog-summary">简介：{{ detailRow.summary }}</h3>
+            <h2 class="dialog-subtitle">题目：</h2>
+            <div class="card">
+              <md-preview v-model="detailRow.content_markdown" />
+            </div>
+            <h2 class="dialog-subtitle">答案：</h2>
+            <div class="card">
+              <md-preview v-model="detailRow.answer_markdown" />
+            </div>
+            <h2 class="dialog-subtitle">解析：</h2>
+            <div class="card">
+              <md-preview v-model="detailRow.explanation_markdown" />
+            </div>
+          </div>
+        </div>
+        <template #footer>
+          <button class="close-button" @click="dialogVisible = false">关闭</button>
+        </template>
+      </el-dialog>
+    </div>
     <!-- 编辑试题区域 -->
     <el-dialog v-model="editDialogVisible" title="编辑试题" width="80%">
       <el-form :model="editForm" label-width="120px">
@@ -109,7 +125,8 @@ import { marked } from 'marked';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { MdPreview, MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
-import { QuestionFilled } from '@element-plus/icons-vue';
+import { QuestionFilled, Search } from '@element-plus/icons-vue';
+
 
 
 const questions = ref([]);
@@ -393,11 +410,87 @@ const debouncedSearch = debounce(async () => {
 </script>
 
 <style scoped>
+.search-input {
+  margin-bottom: 10px;
+}
+
 .item {
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+}
+
+.dialog-content {
+  padding: 20px;
+  /* 内边距 */
+  color: white;
+  /* 字体颜色 */
+}
+
+.dialog-title {
+  font-size: 1.5em;
+  /* 标题字体大小 */
+  color: #f39c12;
+  /* 标题颜色 */
+}
+.dialog-summary{
+  font-size: 1.2em;
+  /* 标题字体大小 */
+  color: #75eb71;
+}
+.dialog-subtitle {
+  font-size: 1.2em;
+  /* 副标题字体大小 */
+  color: #6fe0ed;
+  /* 副标题颜色 */
+}
+
+.close-button {
+  padding: 10px 20px;
+  background: #e74c3c;
+  /* 红色背景 */
+  color: white;
+  /* 字体颜色 */
+  border: none;
+  /* 无边框 */
+  border-radius: 6px;
+  /* 圆角 */
+  cursor: pointer;
+  /* 鼠标手型 */
+  transition: background 0.3s ease;
+  /* 悬停效果 */
+}
+
+.close-button:hover {
+  background: #c0392b;
+  /* 悬停颜色 */
+}
+
+.close-button {
+  padding: 10px 20px;
+  background: #4db8ff;
+  /* 蓝色 */
+  color: #ffffff;
+  /* 白色字体 */
+  border: none;
+  /* 无边框 */
+  border-radius: 5px;
+  /* 圆角 */
+  cursor: pointer;
+  /* 鼠标手型 */
+  transition: background 0.3s ease;
+  /* 悬停效果 */
+}
+
+.close-button:hover {
+  background: #3a94d4;
+  /* 悬停效果 */
+}
+
+.card {
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 </style>

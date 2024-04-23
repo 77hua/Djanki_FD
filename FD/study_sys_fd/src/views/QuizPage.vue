@@ -4,23 +4,25 @@
       <el-col :span="24">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>题目 {{ currentQuestion + 1 }}/{{ questions.length }}</span>
+            <span >题目 {{ currentQuestion + 1 }}/{{ questions.length }}</span>
             <el-button style="float: right; padding: 5px 10px;color:#626aef " text
               @click="backToExercises">返回</el-button>
           </div>
           <div>
-            <h2>题型：{{ questions[currentQuestion].question_type }}</h2>
-            <p>题目介绍：{{ questions[currentQuestion].summary }}</p>
-            <h2>题目</h2>
-            <md-preview v-model="questions[currentQuestion].content_markdown" />
+            <h2 class="dialog-title">题型：{{ questions[currentQuestion].question_type }}</h2>
+            <p class="dialog-summary">简介：{{ questions[currentQuestion].summary }}</p>
+            <h2 class="dialog-subtitle">题目</h2>
+            <el-card class="answer-card">
+              <md-preview v-model="questions[currentQuestion].content_markdown" />
+            </el-card>
             <el-button @click="toggleAnswer">查看答案</el-button>
             <div v-if="showAnswer">
+              <h2 class="dialog-subtitle">答案</h2>
               <el-card class="answer-card">
-                <h2>答案</h2>
                 <md-preview v-model="questions[currentQuestion].answer_markdown" />
               </el-card>
+              <h2 class="dialog-subtitle">解析</h2> 
               <el-card class="explanation-card">
-                <h2>解析</h2>
                 <md-preview v-model="questions[currentQuestion].explanation_markdown" />
               </el-card>
               <div class="response-buttons">
@@ -260,17 +262,35 @@ const filterForReStudy = () => {
 .el-button {
   margin: 10px 0;
 }
-
 /* 按钮主题 */
 .el-button--custom {
-  color: #ffffff; /* 设置文字颜色 */
-  background-color: #6549b0; /* 设置按钮的背景颜色 */
-  border-color: #6549b0; /* 设置边框颜色 */
+  color: #ffffff;
+  /* 设置文字颜色 */
+  background-color: #6549b0;
+  /* 设置按钮的背景颜色 */
+  border-color: #6549b0;
+  /* 设置边框颜色 */
 }
-
 .el-button--custom:hover,
 .el-button--custom:focus {
   background-color: #7d5abe;
   border-color: #7d5abe;
+}
+.dialog-title {
+  font-size: 1.5em;
+  /* 标题字体大小 */
+  color: #f39c12;
+  /* 标题颜色 */
+}
+.dialog-summary{
+  font-size: 1.2em;
+  /* 标题字体大小 */
+  color: #75eb71;
+}
+.dialog-subtitle {
+  font-size: 1.2em;
+  /* 副标题字体大小 */
+  color: #6fe0ed;
+  /* 副标题颜色 */
 }
 </style>

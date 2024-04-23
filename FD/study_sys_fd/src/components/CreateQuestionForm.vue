@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button type="primary" @click="showDialog = true" style="margin-right: 12px;">新建试题</el-button>
-    <el-dialog v-model="showDialog" title="新建试题" width="60%">
+    <el-dialog v-model="showDialog" title="新建试题" width="80%">
       <el-form :model="form" label-width="120px">
         <el-form-item label="题目类型">
           <el-select v-model="form.question_type" placeholder="请选择题目类型">

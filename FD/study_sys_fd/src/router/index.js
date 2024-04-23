@@ -8,14 +8,12 @@ const routes = [
   {
     path: '/register',
     name: 'Register',
-    component: () => import("../views/Register.vue"),
-    meta: { transitionName: 'slide' }
+    component: () => import("../views/Register.vue")
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/Login.vue'),
-    meta: { transitionName: 'slide' }
+    component: () => import('../views/Login.vue')
   },
   // 前台：首页
   {
