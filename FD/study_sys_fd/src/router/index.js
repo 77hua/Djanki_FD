@@ -43,6 +43,11 @@ const routes = [
         props: true,
         component: () => import('../views/QuizPage.vue')
       },
+      {
+        path:'statistics',
+        name:'Statistics',
+        component: () => import('../views/Statistics.vue')
+      }
     ]
   },
   // 后台：首页

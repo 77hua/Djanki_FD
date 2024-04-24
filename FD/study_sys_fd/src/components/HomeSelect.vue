@@ -31,8 +31,7 @@ const toStudy = () => {
 };
 
 const toStatistics = () => {
-  // router.push({ name: 'Statistics' });
-  console.log("统计");
+  router.push({ name: 'Statistics' });
 };
 </script>
 
